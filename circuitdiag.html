@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NPK Sensor – Arduino RS485 Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c7a2c;
+        }
+        pre {
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        code {
+            color: #dcdcdc;
+        }
+    </style>
+</head>
+<body>
+
+<h1>NPK Sensor Interface Code (Arduino + MAX485)</h1>
+
+<p>
+This code reads Nitrogen, Phosphorus, and Potassium values from a soil NPK sensor
+using RS485 Modbus RTU communication.
+</p>
+
+<pre><code>
+#include &lt;ModbusMaster.h&gt;
+#include &lt;SoftwareSerial.h&gt;
+
+// RS485 control pin
+#define MAX485_DE_RE 2
+
+// Software Serial pins
+#define RX_PIN 10
+#define TX_PIN 11
+
+SoftwareSerial rs485Serial(RX_PIN, TX_PIN);
+ModbusMaster node;
+
+// Enable transmission
+void preTransmission()
+{
+  digitalWrite(MAX485_DE_RE, HIGH);
+}
+
+// Enable reception
+void postTransmission()
+{
+  digitalWrite(MAX485_DE_RE, LOW);
+}
+
+void setup()
+{
+  Serial.begin(9600);
+  rs485Serial.begin(9600);
+
+  pinMode(MAX485_DE_RE, OUTPUT);
+  digitalWrite(MAX485_DE_RE, LOW);
+
+  node.begin(1, rs485Serial); // Slave ID = 1
+  node.preTransmission(preTransmission);
+  node.postTransmission(postTransmission);
+
+  Serial.println("NPK Sensor Initialized...");
+}
+
+void loop()
+{
+  uint8_t result;
+  uint16_t nitrogen, phosphorus, potassium;
+
+  // Read Nitrogen
+  result = node.readHoldingRegisters(0x001E, 1);
+  nitrogen = (result == node.ku8MBSuccess) ? node.getResponseBuffer(0) : 0;
+  delay(200);
+
+  // Read Phosphorus
+  result = node.readHoldingRegisters(0x001F, 1);
+  phosphorus = (result == node.ku8MBSuccess) ? node.getResponseBuffer(0) : 0;
+  delay(200);
+
+  // Read Potassium
+  result = node.readHoldingRegisters(0x0020, 1);
+  potassium = (result == node.ku8MBSuccess) ? node.getResponseBuffer(0) : 0;
+
+  Serial.println("----- Soil Nutrient Levels -----");
+  Serial.print("Nitrogen (N): ");
+  Serial.print(nitrogen);
+  Serial.println(" mg/kg");
+
+  Serial.print("Phosphorus (P): ");
+  Serial.print(phosphorus);
+  Serial.println(" mg/kg");
+
+  Serial.print("Potassium (K): ");
+  Serial.print(potassium);
+  Serial.println(" mg/kg");
+  Serial.println("--------------------------------");
+
+  delay(2000);
+}
+</code></pre>
+
+</body>
+</html>

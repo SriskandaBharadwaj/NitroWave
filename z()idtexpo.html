@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Smart Soil Monitor - NPK Sensor System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        /* Mode Selector */
+        .mode-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .mode-selector h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .mode-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .mode-btn {
+            padding: 18px 25px;
+            font-size: 1.05em;
+            font-weight: 600;
+            border: 3px solid #e0e0e0;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .mode-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+
+        /* Input Section */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 28px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        /* Display Section */
+        .sensor-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sensor-label {
+            font-size: 1em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .sensor-value {
+            font-size: 3.5em;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+
+        .sensor-unit {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        /* Level Bar */
+        .level-bar {
+            height: 40px;
+            background: linear-gradient(90deg, #e74c3c 0%, #f39c12 25%, #f1c40f 50%, #2ecc71 100%);
+            border-radius: 20px;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .level-marker {
+            position: absolute;
+            width: 4px;
+            height: 50px;
+            background: #2c3e50;
+            top: -5px;
+            transition: left 0.5s ease;
+        }
+
+        .level-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+            font-weight: 600;
+        }
+
+        /* Status Cards */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .status-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .status-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        /* Recommendation Box */
+        .recommendation {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .recommendation h4 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .recommendation p {
+            color: #555;
+            line-height: 2;
+            font-size: 1em;
+            white-space: pre-line;
+        }
+
+        /* Dataset Table */
+        .dataset-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+        }
+
+        .dataset-table thead {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .dataset-table th,
+        .dataset-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.95em;
+        }
+
+        .dataset-table tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            margin-top: 20px;
+            padding: 25px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+
+        .chart-title {
+            color: #2c3e50;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-bars {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            min-height: 150px;
+        }
+
+        .bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px 20px;
+            min-width: 120px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .bar-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .bar-label {
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .bar-value {
+            font-size: 2em;
+            font-weight: 800;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .bar-unit {
+            font-size: 0.8em;
+            color: #999;
+        }
+
+        .bar-status {
+            margin-top: 8px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* Demo Scenarios */
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .scenario-card {
+            background: #fff;
+            border: 3px solid #e0e0e0;
+            padding: 25px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .scenario-card:hover {
+            border-color: #3498db;
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .scenario-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .scenario-desc {
+            font-size: 1em;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .scenario-status {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.95em;
+            margin-top: 10px;
+        }
+
+        /* Loading Animation */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #3498db;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sensor-value {
+                font-size: 2.8em;
+            }
+
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mode-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .scenario-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.6em;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .card-title {
+                font-size: 1.2em;
+            }
+
+            .sensor-value {
+                font-size: 2.5em;
+            }
+
+            .sensor-display {
+                padding: 25px;
+            }
+
+            .input-field {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+
+            .btn {
+                padding: 16px 24px;
+                font-size: 1.05em;
+            }
+
+            .mode-btn {
+                padding: 20px;
+                font-size: 1.1em;
+            }
+
+            .dataset-table {
+                font-size: 0.85em;
+            }
+
+            .dataset-table th,
+            .dataset-table td {
+                padding: 10px 8px;
+            }
+
+            .scenario-card {
+                padding: 25px 20px;
+            }
+
+            .scenario-title {
+                font-size: 1.15em;
+            }
+
+            .scenario-desc {
+                font-size: 0.95em;
+            }
+
+            .status-card {
+                padding: 18px;
+            }
+
+            .status-value {
+                font-size: 1.8em;
+            }
+
+            .recommendation {
+                padding: 18px;
+            }
+
+            .recommendation h4 {
+                font-size: 1.1em;
+            }
+
+            .recommendation p {
+                font-size: 0.95em;
+            }
+
+            /* Hide some table columns on mobile */
+            .dataset-table th:nth-child(4),
+            .dataset-table td:nth-child(4),
+            .dataset-table th:nth-child(5),
+            .dataset-table td:nth-child(5) {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.4em;
+            }
+
+            .sensor-value {
+                font-size: 2.2em;
+            }
+
+            .chart-bars {
+                gap: 12px;
+                padding: 15px;
+            }
+
+            .bar-item {
+                min-width: 100px;
+                padding: 12px 15px;
+            }
+
+            .bar-value {
+                font-size: 1.6em;
+            }
+
+            .bar-label {
+                font-size: 0.8em;
+            }
+
+            .chart-title {
+                font-size: 1em;
+            }
+
+            .status-grid {
+                gap: 12px;
+            }
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Smart Soil Monitoring System for Flood Affected Farms</h1>
+            <p>Real-Time NPK Sensor Analysis</p>
+        </div>
+
+        <!-- Mode Selector -->
+        <div class="mode-selector">
+            <h3>Select Testing Mode</h3>
+            <div class="mode-buttons">
+                <button class="mode-btn active" onclick="switchMode('manual')" id="manualBtn">
+                    Manual Input Mode
+                </button>
+                <button class="mode-btn" onclick="switchMode('simulation')" id="simulationBtn">
+                    Auto Simulation Mode
+                </button>
+                <button class="mode-btn" onclick="switchMode('demo')" id="demoBtn">
+                    Demo Scenarios
+                </button>
+            </div>
+        </div>
+
+        <!-- Manual Input Mode -->
+        <div id="manualMode" class="main-grid" style="display: grid;">
+            <!-- Input Card -->
+            <div class="card">
+                <h2 class="card-title">Enter Test Values</h2>
+
+                <div class="input-group">
+                    <label class="input-label">Field Name / Location</label>
+                    <input type="text" id="fieldName" class="input-field" placeholder="e.g., North Field" value="Field A">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Nitrogen (N) - mg/kg</label>
+                    <input type="number" id="nitrogenInput" class="input-field" placeholder="0-500" value="245" min="0" max="500">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Phosphorus (P) - mg/kg</label>
+                    <input type="number" id="phosphorusInput" class="input-field" placeholder="0-200" value="38" min="0" max="200">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Potassium (K) - mg/kg</label>
+                    <input type="number" id="potassiumInput" class="input-field" placeholder="0-300" value="182" min="0" max="300">
+                </div>
+
+                <button class="btn btn-primary" onclick="updateReadings()">Update Readings</button>
+                <button class="btn btn-success" onclick="saveReading()">Save to History</button>
+            </div>
+
+            <!-- Display Card -->
+            <div class="card">
+                <h2 class="card-title">Current Readings</h2>
+
+                <div class="sensor-display">
+                    <div class="sensor-label">Nitrogen Level (N)</div>
+                    <div class="sensor-value" id="displayNitrogen">245</div>
+                    <div class="sensor-unit">mg/kg</div>
+                </div>
+
+                <div class="level-bar">
+                    <div class="level-marker" id="levelMarker"></div>
+                </div>
+                <div class="level-labels">
+                    <span>Low</span>
+                    <span>Moderate</span>
+                    <span>Good</span>
+                    <span>High</span>
+                </div>
+
+                <div class="status-grid">
+                    <div class="status-card" style="border-left-color: #f39c12;">
+                        <div class="status-label">Phosphorus (P)</div>
+                        <div class="status-value" id="displayP">38</div>
+                    </div>
+                    <div class="status-card" style="border-left-color: #9b59b6;">
+                        <div class="status-label">Potassium (K)</div>
+                        <div class="status-value" id="displayK">182</div>
+                    </div>
+                </div>
+
+                <div class="recommendation">
+                    <h4>Recommendation</h4>
+                    <p id="recommendation">Nitrogen levels are moderate. Suitable for wheat, rice, and leafy vegetables. Consider adding organic compost for long-term soil health.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulation Mode -->
+        <div id="simulationMode" style="display: none;">
+            <div class="card">
+                <h2 class="card-title">Automatic Sensor Simulation</h2>
+                <p style="color: #666; margin-bottom: 20px; line-height: 1.6;">
+                    This mode simulates real NPK sensor readings as if you're testing actual soil. 
+                    Click the button below to start automatic testing.
+                </p>
+
+                <div id="simulationDisplay">
+                    <div class="sensor-display">
+                        <div class="sensor-label">Simulated Nitrogen Reading</div>
+                        <div class="sensor-value" id="simNitrogen">---</div>
+                        <div class="sensor-unit">mg/kg</div>
+                    </div>
+
+                    <div class="level-bar">
+                        <div class="level-marker" id="simMarker"></div>
+                    </div>
+                    <div class="level-labels">
+                        <span>Low</span>
+                        <span>Moderate</span>
+                        <span>Good</span>
+                        <span>High</span>
+                    </div>
+
+                    <div class="status-grid">
+                        <div class="status-card" style="border-left-color: #f39c12;">
+                            <div class="status-label">Phosphorus (P)</div>
+                            <div class="status-value" id="simP">---</div>
+                        </div>
+                        <div class="status-card" style="border-left-color: #9b59b6;">
+                            <div class="status-label">Potassium (K)</div>
+                            <div class="status-value" id="simK">---</div>
+                        </div>
+                    </div>
+
+                    <div class="recommendation">
+                        <h4>Recommendation</h4>
+                        <p id="simRecommendation">Click "Start Simulation" to begin testing...</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="startSimulation()" id="simBtn">Start Simulation</button>
+                <button class="btn btn-success" onclick="saveSimulation()" id="saveSimBtn" style="display: none;">Save This Reading</button>
+            </div>
+        </div>
+
+        <!-- Demo Scenarios Mode -->
+        <div id="demoMode" style="display: none;">
+            <div class="card">
+                <h2 class="card-title">Common Flood Situations</h2>
+                <p style="color: #666; margin-bottom: 25px; line-height: 1.7; font-size: 1.05em;">
+                    Choose the situation that matches your field condition after the flood:
+                </p>
+
+                <div class="scenario-grid">
+                    <div class="scenario-card" onclick="loadScenario('severe')">
+                        <div class="scenario-title">Heavy Flood</div>
+                        <div class="scenario-desc">Water stayed for many days<br>Crops completely destroyed</div>
+                        <div class="scenario-status" style="background: #e74c3c; color: white;">Urgent Help Needed</div>
+                    </div>
+
+                    <div class="scenario-card" onclick="loadScenario('moderate')">
+                        <div class="scenario-title">Medium Flood</div>
+                        <div class="scenario-desc">Water stayed for 2-3 days<br>Some crops damaged</div>
+                        <div class="scenario-status" style="background: #f39c12; color: white;">Needs Fertilizer</div>
+                    </div>
+
+                    <div class="scenario-card" onclick="loadScenario('light')">
+                        <div class="scenario-title">Light Flood</div>
+                        <div class="scenario-desc">Water drained in 1 day<br>Most crops survived</div>
+                        <div class="scenario-status" style="background: #f1c40f; color: #333;">Minor Problem</div>
+                    </div>
+
+                    <div class="scenario-card" onclick="loadScenario('recovered')">
+                        <div class="scenario-title">After Recovery</div>
+                        <div class="scenario-desc">2-3 weeks after flood<br>Field is recovering well</div>
+                        <div class="scenario-status" style="background: #27ae60; color: white;">Good Condition</div>
+                    </div>
+                </div>
+
+                <div id="scenarioDisplay" style="margin-top: 30px; display: none;">
+                    <div class="sensor-display">
+                        <div class="sensor-label" id="scenarioTitle">Scenario Name</div>
+                        <div class="sensor-value" id="scenarioN">---</div>
+                        <div class="sensor-unit">mg/kg Nitrogen</div>
+                    </div>
+
+                    <div class="status-grid">
+                        <div class="status-card" style="border-left-color: #f39c12;">
+                            <div class="status-label">Phosphorus (P)</div>
+                            <div class="status-value" id="scenarioP">---</div>
+                        </div>
+                        <div class="status-card" style="border-left-color: #9b59b6;">
+                            <div class="status-label">Potassium (K)</div>
+                            <div class="status-value" id="scenarioK">---</div>
+                        </div>
+                    </div>
+
+                    <div class="recommendation">
+                        <h4>What You Should Do</h4>
+                        <p id="scenarioRec" style="white-space: pre-line;">Scenario recommendation will appear here...</p>
+                    </div>
+
+                    <button class="btn btn-success" onclick="saveScenario()">Save This Reading</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="card">
+            <h2 class="card-title">Testing History</h2>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <p style="color: #666;">Total Tests: <strong id="recordCount">0</strong></p>
+                <button class="btn-warning" style="padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;" onclick="clearHistory()">Clear History</button>
+            </div>
+
+            <table class="dataset-table">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Location</th>
+                        <th>N (mg/kg)</th>
+                        <th>P (mg/kg)</th>
+                        <th>K (mg/kg)</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody">
+                    <tr>
+                        <td colspan="7" class="no-data">No tests recorded yet. Start testing and save your readings.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="chart-container">
+                <h3 class="chart-title">Nitrogen Levels Over Time (mg/kg)</h3>
+                <div class="chart-bars" id="chartBars">
+                    <div style="text-align: center; width: 100%; color: #999; padding: 80px 20px; font-size: 1em;">
+                        No data to display. Save readings to see nitrogen levels.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let history = [];
+        let recordId = 1;
+        let currentMode = 'manual';
+
+        // Initialize
+        updateReadings();
+
+        // Mode Switching
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            // Update button states
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Hide all modes
+            document.getElementById('manualMode').style.display = 'none';
+            document.getElementById('simulationMode').style.display = 'none';
+            document.getElementById('demoMode').style.display = 'none';
+            
+            // Show selected mode
+            if (mode === 'manual') {
+                document.getElementById('manualMode').style.display = 'grid';
+                document.getElementById('manualBtn').classList.add('active');
+            } else if (mode === 'simulation') {
+                document.getElementById('simulationMode').style.display = 'block';
+                document.getElementById('simulationBtn').classList.add('active');
+            } else if (mode === 'demo') {
+                document.getElementById('demoMode').style.display = 'block';
+                document.getElementById('demoBtn').classList.add('active');
+            }
+        }
+
+        // Manual Mode Functions
+        function updateReadings() {
+            const nitrogen = parseFloat(document.getElementById('nitrogenInput').value) || 0;
+            const phosphorus = parseFloat(document.getElementById('phosphorusInput').value) || 0;
+            const potassium = parseFloat(document.getElementById('potassiumInput').value) || 0;
+
+            document.getElementById('displayNitrogen').textContent = nitrogen;
+            document.getElementById('displayP').textContent = phosphorus;
+            document.getElementById('displayK').textContent = potassium;
+
+            updateLevelMarker(nitrogen, 'levelMarker');
+            updateRecommendation(nitrogen, 'recommendation');
+        }
+
+        function updateLevelMarker(nitrogen, markerId) {
+            const marker = document.getElementById(markerId);
+            const position = (nitrogen / 500) * 100;
+            marker.style.left = position + '%';
+        }
+
+        function updateRecommendation(nitrogen, elementId) {
+            let recommendation = '';
+            
+            if (nitrogen < 150) {
+                recommendation = 'URGENT: Low nitrogen detected.\n\nApply immediately:\nUrea: 50-60 kg/acre\nDAP: 30 kg/acre\n\nCost: ₹2,500-3,000\nWithout fertilizer, yield will drop 40-60%.';
+            } else if (nitrogen < 250) {
+                recommendation = 'Nitrogen is adequate for most crops.\n\nRecommended:\nUrea: 30-40 kg/acre\nAdd compost for better results\n\nSuitable crops: Wheat, rice, vegetables\nCost: ₹1,500-2,000';
+            } else if (nitrogen < 350) {
+                recommendation = 'EXCELLENT: Optimal nitrogen levels.\n\nAction:\nMaintain current practices\nNo additional fertilizer needed now\n\nGood for: All crops including tomatoes, peppers, corn';
+            } else {
+                recommendation = 'WARNING: Nitrogen too high.\n\nAction:\nSTOP nitrogen fertilizers\nRisk of water pollution\nPlant heavy feeders (corn, cabbage)\n\nReduce application by 50% next season.';
+            }
+            
+            document.getElementById(elementId).textContent = recommendation;
+        }
+
+        function saveReading() {
+            const fieldName = document.getElementById('fieldName').value || 'Unknown Field';
+            const nitrogen = parseFloat(document.getElementById('nitrogenInput').value) || 0;
+            const phosphorus = parseFloat(document.getElementById('phosphorusInput').value) || 0;
+            const potassium = parseFloat(document.getElementById('potassiumInput').value) || 0;
+
+            addToHistory(fieldName, nitrogen, phosphorus, potassium);
+            alert('Reading saved successfully!\nTotal tests: ' + history.length);
+        }
+
+        // Simulation Mode Functions
+        function startSimulation() {
+            const btn = document.getElementById('simBtn');
+            btn.textContent = 'Testing Soil...';
+            btn.disabled = true;
+
+            document.getElementById('simNitrogen').textContent = '---';
+            document.getElementById('simP').textContent = '---';
+            document.getElementById('simK').textContent = '---';
+            document.getElementById('simRecommendation').textContent = 'Sensor reading in progress...';
+
+            setTimeout(() => {
+                // Generate realistic random values
+                const nitrogen = Math.floor(Math.random() * 350) + 80; // 80-430
+                const phosphorus = Math.floor(Math.random() * 150) + 20; // 20-170
+                const potassium = Math.floor(Math.random() * 250) + 50; // 50-300
+
+                document.getElementById('simNitrogen').textContent = nitrogen;
+                document.getElementById('simP').textContent = phosphorus;
+                document.getElementById('simK').textContent = potassium;
+
+                updateLevelMarker(nitrogen, 'simMarker');
+                updateRecommendation(nitrogen, 'simRecommendation');
+
+                btn.textContent = 'Test Again';
+                btn.disabled = false;
+                document.getElementById('saveSimBtn').style.display = 'block';
+            }, 2000);
+        }
+
+        function saveSimulation() {
+            const nitrogen = parseInt(document.getElementById('simNitrogen').textContent);
+            const phosphorus = parseInt(document.getElementById('simP').textContent);
+            const potassium = parseInt(document.getElementById('simK').textContent);
+
+            addToHistory('Simulated Test', nitrogen, phosphorus, potassium);
+            alert('Simulated reading saved!\nTotal tests: ' + history.length);
+            document.getElementById('saveSimBtn').style.display = 'none';
+        }
+
+        // Demo Scenarios
+        const scenarios = {
+            severe: {
+                name: 'Heavy Flood (Severe Damage)',
+                n: 85,
+                p: 22,
+                k: 65,
+                rec: 'URGENT - Apply fertilizers immediately:\n\nUrea: 60 kg per acre\nDAP: 40 kg per acre\nPotash: 30 kg per acre\n\nCost: ₹3,000-4,000 per acre\nRecovery: 2-3 weeks'
+            },
+            moderate: {
+                name: 'Medium Flood (Moderate Damage)',
+                n: 165,
+                p: 45,
+                k: 125,
+                rec: 'Apply fertilizers before planting:\n\nUrea: 40 kg per acre\nDAP: 25 kg per acre\nPotash: 20 kg per acre\nAdd 2 trolleys cow dung\n\nCost: ₹2,000-2,500 per acre\nRecovery: 1-2 weeks'
+            },
+            light: {
+                name: 'Light Flood (Minor Damage)',
+                n: 235,
+                p: 68,
+                k: 175,
+                rec: 'Small problem - Easy to fix:\n\nUrea: 20-25 kg per acre\nAdd 1 trolley cow dung\nMix with soil\n\nCost: ₹1,000-1,500 per acre\nRecovery: 3-5 days'
+            },
+            recovered: {
+                name: 'After Recovery (Good Soil)',
+                n: 310,
+                p: 95,
+                k: 210,
+                rec: 'Field is healthy!\n\nNo urgent fertilizer needed\nUse normal fertilizer\nAll crops will grow well\nContinue good practices\n\nYour soil is in good condition'
+            }
+        };
+
+        function loadScenario(type) {
+            const scenario = scenarios[type];
+            
+            document.getElementById('scenarioDisplay').style.display = 'block';
+            document.getElementById('scenarioTitle').textContent = scenario.name;
+            document.getElementById('scenarioN').textContent = scenario.n;
+            document.getElementById('scenarioP').textContent = scenario.p;
+            document.getElementById('scenarioK').textContent = scenario.k;
+            document.getElementById('scenarioRec').textContent = scenario.rec;
+
+            // Store current scenario for saving
+            window.currentScenario = {
+                name: scenario.name,
+                n: scenario.n,
+                p: scenario.p,
+                k: scenario.k
+            };
+        }
+
+        function saveScenario() {
+            if (window.currentScenario) {
+                addToHistory(
+                    window.currentScenario.name,
+                    window.currentScenario.n,
+                    window.currentScenario.p,
+                    window.currentScenario.k
+                );
+                alert('Scenario saved to history!\nTotal tests: ' + history.length);
+            }
+        }
+
+        // History Management
+        function addToHistory(location, nitrogen, phosphorus, potassium) {
+            const now = new Date();
+            const dateTime = now.toLocaleString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            let status = '';
+            if (nitrogen < 150) status = 'Low';
+            else if (nitrogen < 250) status = 'Moderate';
+            else if (nitrogen < 350) status = 'Good';
+            else status = 'High';
+
+            const record = {
+                id: recordId++,
+                dateTime: dateTime,
+                location: location,
+                nitrogen: nitrogen,
+                phosphorus: phosphorus,
+                potassium: potassium,
+                status: status
+            };
+
+            history.push(record);
+            updateHistoryTable();
+            updateChart();
+        }
+
+        function updateHistoryTable() {
+            const tbody = document.getElementById('historyBody');
+            
+            if (history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="no-data">No tests recorded yet. Start testing and save your readings.</td></tr>';
+                document.getElementById('recordCount').textContent = '0';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            history.slice().reverse().forEach((record, index) => {
+                const actualIndex = history.length - 1 - index;
+                const row = tbody.insertRow();
+                
+                let statusColor = '#95a5a6';
+                if (record.status === 'Low') statusColor = '#e74c3c';
+                else if (record.status === 'Moderate') statusColor = '#f39c12';
+                else if (record.status === 'Good') statusColor = '#27ae60';
+                else if (record.status === 'High') statusColor = '#e74c3c'; // Changed from blue to red
+
+                row.innerHTML = `
+                    <td>${record.dateTime}</td>
+                    <td><strong>${record.location}</strong></td>
+                    <td><strong>${record.nitrogen}</strong></td>
+                    <td>${record.phosphorus}</td>
+                    <td>${record.potassium}</td>
+                    <td><span style="background: ${statusColor}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600;">${record.status}</span></td>
+                    <td><button class="delete-btn" onclick="deleteRecord(${actualIndex})">Delete</button></td>
+                `;
+            });
+
+            document.getElementById('recordCount').textContent = history.length;
+        }
+
+        function deleteRecord(index) {
+            if (confirm('Delete this test record?')) {
+                history.splice(index, 1);
+                updateHistoryTable();
+                updateChart();
+            }
+        }
+
+        function clearHistory() {
+            if (history.length === 0) {
+                alert('No history to clear!');
+                return;
+            }
+
+            if (confirm('Clear all test history? This cannot be undone.')) {
+                history = [];
+                recordId = 1;
+                updateHistoryTable();
+                updateChart();
+                alert('History cleared successfully!');
+            }
+        }
+
+        function updateChart() {
+            const chartBars = document.getElementById('chartBars');
+            
+            if (history.length === 0) {
+                chartBars.innerHTML = '<div style="text-align: center; width: 100%; color: #999; padding: 60px 20px; font-size: 1em;">No data to display. Save readings to see nitrogen levels.</div>';
+                return;
+            }
+
+            chartBars.innerHTML = '';
+            
+            // Show all records
+            const displayData = history;
+
+            displayData.forEach((record, index) => {
+                const barItem = document.createElement('div');
+                barItem.className = 'bar-item';
+                
+                // Color code based on nitrogen level
+                let statusColor = '#3498db';
+                let statusText = 'Normal';
+                if (record.nitrogen < 150) {
+                    statusColor = '#e74c3c';
+                    statusText = 'Low';
+                } else if (record.nitrogen < 250) {
+                    statusColor = '#f39c12';
+                    statusText = 'Moderate';
+                } else if (record.nitrogen < 350) {
+                    statusColor = '#27ae60';
+                    statusText = 'Good';
+                } else {
+                    statusColor = '#e74c3c';
+                    statusText = 'High';
+                }
+                
+                barItem.innerHTML = `
+                    <div class="bar-label">Test #${record.id}</div>
+                    <div class="bar-value">${record.nitrogen}</div>
+                    <div class="bar-unit">mg/kg</div>
+                    <div class="bar-status" style="background: ${statusColor};">${statusText}</div>
+                `;
+                
+                // Add border color to match status
+                barItem.style.borderColor = statusColor;
+                
+                chartBars.appendChild(barItem);
+            });
+        }
+    </script>
+</body>
+</html>

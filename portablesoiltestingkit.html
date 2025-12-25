@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroTest Pro - Portable Soil & Nitrogen Testing Kit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Righteous&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --earth-brown: #5D4E37;
+            --leaf-green: #4CAF50;
+            --sky-blue: #03A9F4;
+            --soil-dark: #3E2723;
+            --harvest-gold: #FFA726;
+            --warning-red: #EF5350;
+            --good-green: #66BB6A;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 50%, #01579b 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .bg-particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-30px) translateX(20px); }
+            50% { transform: translateY(-60px) translateX(-20px); }
+            75% { transform: translateY(-30px) translateX(10px); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-family: 'Righteous', cursive;
+            font-size: 3.5em;
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 50%, #CDDC39 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.5)); }
+            50% { filter: drop-shadow(0 0 20px rgba(76, 175, 80, 0.8)); }
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.3em;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        /* Main Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* Device Display */
+        .device-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .device-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(76, 175, 80, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .device-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .device-title {
+            font-family: 'Righteous', cursive;
+            font-size: 2em;
+            color: var(--earth-brown);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .device-screen {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.5), 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 3px solid #304FFE;
+            position: relative;
+        }
+
+        /* Nitrogen Level Display */
+        .nitrogen-display {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nitrogen-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        .nitrogen-value {
+            font-size: 5em;
+            font-weight: 800;
+            color: #4CAF50;
+            text-shadow: 0 0 30px rgba(76, 175, 80, 0.8);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        .nitrogen-unit {
+            font-size: 1.5em;
+            color: rgba(255, 255, 255, 0.6);
+            margin-left: 10px;
+        }
+
+        /* Gauge Meter */
+        .gauge-container {
+            position: relative;
+            width: 280px;
+            height: 180px;
+            margin: 30px auto;
+        }
+
+        .gauge {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .gauge-bg {
+            width: 280px;
+            height: 140px;
+            border-radius: 140px 140px 0 0;
+            background: linear-gradient(90deg, 
+                #EF5350 0%, 
+                #FFA726 25%, 
+                #FFEB3B 50%, 
+                #8BC34A 75%, 
+                #4CAF50 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gauge-mask {
+            position: absolute;
+            width: 220px;
+            height: 110px;
+            background: #1a237e;
+            border-radius: 110px 110px 0 0;
+            top: 30px;
+            left: 30px;
+        }
+
+        .gauge-needle {
+            position: absolute;
+            width: 4px;
+            height: 100px;
+            background: white;
+            bottom: 0;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(45deg);
+            border-radius: 4px 4px 0 0;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 10;
+        }
+
+        .gauge-center {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            z-index: 11;
+        }
+
+        .gauge-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 0 20px;
+        }
+
+        .gauge-label {
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .status-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95em;
+        }
+
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-excellent { background: #4CAF50; color: white; }
+        .status-good { background: #8BC34A; color: white; }
+        .status-fair { background: #FFA726; color: white; }
+        .status-poor { background: #EF5350; color: white; }
+
+        /* Reading Section */
+        .reading-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .reading-title {
+            font-family: 'Righteous', cursive;
+            font-size: 2em;
+            color: var(--earth-brown);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .reading-cards {
+            display: grid;
+            gap: 20px;
+        }
+
+        .reading-card {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            border-radius: 20px;
+            padding: 25px;
+            border-left: 6px solid var(--leaf-green);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .reading-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-icon {
+            font-size: 2.5em;
+        }
+
+        .card-label {
+            font-size: 1.1em;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-value {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: var(--earth-brown);
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            color: #777;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+            background: linear-gradient(90deg, var(--leaf-green) 0%, var(--good-green) 100%);
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .action-btn {
+            padding: 20px 30px;
+            font-size: 1.1em;
+            font-weight: 700;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #03A9F4 0%, #29B6F6 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(3, 169, 244, 0.4);
+        }
+
+        /* Info Section */
+        .info-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 40px;
+            margin-top: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .info-card {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8f5e9 100%);
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: scale(1.05);
+        }
+
+        .info-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .info-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--earth-brown);
+            margin-bottom: 10px;
+        }
+
+        .info-text {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5em;
+            }
+
+            .device-title, .reading-title {
+                font-size: 1.5em;
+            }
+
+            .nitrogen-value {
+                font-size: 3.5em;
+            }
+
+            .gauge-container {
+                width: 220px;
+                height: 150px;
+            }
+
+            .gauge-bg {
+                width: 220px;
+                height: 110px;
+            }
+
+            .gauge-mask {
+                width: 170px;
+                height: 85px;
+                top: 25px;
+                left: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-particles" id="particles"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="logo">🌾 AgroTest Pro</h1>
+            <p class="tagline">Portable Soil & Nitrogen Testing Kit for Smart Farming</p>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard">
+            <!-- Device Display -->
+            <div class="device-section">
+                <div class="device-container">
+                    <h2 class="device-title">📱 Live Readings</h2>
+                    <div class="device-screen">
+                        <div class="nitrogen-display">
+                            <div class="nitrogen-label">Nitrogen Level</div>
+                            <div>
+                                <span class="nitrogen-value" id="nitrogenValue">245</span>
+                                <span class="nitrogen-unit">mg/kg</span>
+                            </div>
+                        </div>
+
+                        <div class="gauge-container">
+                            <div class="gauge">
+                                <div class="gauge-bg"></div>
+                                <div class="gauge-mask"></div>
+                                <div class="gauge-needle" id="gaugeNeedle"></div>
+                                <div class="gauge-center"></div>
+                            </div>
+                            <div class="gauge-labels">
+                                <span class="gauge-label">Low</span>
+                                <span class="gauge-label">Optimal</span>
+                                <span class="gauge-label">High</span>
+                            </div>
+                        </div>
+
+                        <div class="status-indicator">
+                            <div class="status-row">
+                                <span class="status-label">Soil Condition:</span>
+                                <span class="status-badge status-good" id="soilStatus">Good</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="status-label">Nitrogen Status:</span>
+                                <span class="status-badge status-good" id="nitrogenStatus">Adequate</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="status-label">pH Level:</span>
+                                <span class="status-badge status-excellent" id="phStatus">Optimal</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reading Section -->
+            <div class="reading-section">
+                <h2 class="reading-title">📊 Detailed Analysis</h2>
+                <div class="reading-cards">
+                    <div class="reading-card">
+                        <div class="card-header">
+                            <span class="card-icon">🌱</span>
+                            <span class="card-label">Nitrogen (N)</span>
+                        </div>
+                        <div class="card-value" id="nValue">245</div>
+                        <div class="card-description">
+                            Adequate nitrogen for crop growth. Recommended for wheat, rice, and leafy vegetables.
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="nProgress" style="width: 65%"></div>
+                        </div>
+                    </div>
+
+                    <div class="reading-card" style="border-left-color: #FFA726;">
+                        <div class="card-header">
+                            <span class="card-icon">🌾</span>
+                            <span class="card-label">Phosphorus (P)</span>
+                        </div>
+                        <div class="card-value" id="pValue">38</div>
+                        <div class="card-description">
+                            Moderate phosphorus levels. Supports root development and flowering.
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%; background: linear-gradient(90deg, #FFA726 0%, #FFB74D 100%);"></div>
+                        </div>
+                    </div>
+
+                    <div class="reading-card" style="border-left-color: #03A9F4;">
+                        <div class="card-header">
+                            <span class="card-icon">🍃</span>
+                            <span class="card-label">Potassium (K)</span>
+                        </div>
+                        <div class="card-value" id="kValue">182</div>
+                        <div class="card-description">
+                            Good potassium content. Enhances disease resistance and fruit quality.
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 70%; background: linear-gradient(90deg, #03A9F4 0%, #29B6F6 100%);"></div>
+                        </div>
+                    </div>
+
+                    <div class="reading-card" style="border-left-color: #9C27B0;">
+                        <div class="card-header">
+                            <span class="card-icon">💧</span>
+                            <span class="card-label">Soil Moisture</span>
+                        </div>
+                        <div class="card-value">28%</div>
+                        <div class="card-description">
+                            Adequate moisture for most crops. Irrigation recommended in 2-3 days.
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 55%; background: linear-gradient(90deg, #9C27B0 0%, #BA68C8 100%);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="action-btn btn-primary" onclick="startNewTest()">
+                        🔍 New Test
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="exportData()">
+                        📥 Export Report
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="info-section">
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon">⚡</div>
+                    <div class="info-title">Instant Results</div>
+                    <div class="info-text">Get accurate NPK readings in just 30 seconds. No lab required.</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">💰</div>
+                    <div class="info-title">Cost Effective</div>
+                    <div class="info-text">Save up to ₹2000 per test compared to traditional lab testing.</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">📱</div>
+                    <div class="info-title">Easy to Use</div>
+                    <div class="info-text">Simple interface designed for farmers. No technical knowledge needed.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 8 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = Math.random() * 10 + 10 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Update gauge needle based on nitrogen value
+        function updateGauge(value) {
+            const needle = document.getElementById('gaugeNeedle');
+            // Map 0-500 to -90deg to 90deg
+            const angle = ((value / 500) * 180) - 90;
+            needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+        }
+
+        // Update status badges based on values
+        function updateStatus(nitrogenValue) {
+            const soilStatus = document.getElementById('soilStatus');
+            const nitrogenStatus = document.getElementById('nitrogenStatus');
+            
+            if (nitrogenValue < 150) {
+                nitrogenStatus.textContent = 'Low';
+                nitrogenStatus.className = 'status-badge status-poor';
+                soilStatus.textContent = 'Needs Fertilizer';
+                soilStatus.className = 'status-badge status-fair';
+            } else if (nitrogenValue < 250) {
+                nitrogenStatus.textContent = 'Adequate';
+                nitrogenStatus.className = 'status-badge status-good';
+                soilStatus.textContent = 'Good';
+                soilStatus.className = 'status-badge status-good';
+            } else if (nitrogenValue < 350) {
+                nitrogenStatus.textContent = 'Optimal';
+                nitrogenStatus.className = 'status-badge status-excellent';
+                soilStatus.textContent = 'Excellent';
+                soilStatus.className = 'status-badge status-excellent';
+            } else {
+                nitrogenStatus.textContent = 'High';
+                nitrogenStatus.className = 'status-badge status-fair';
+                soilStatus.textContent = 'Over-fertilized';
+                soilStatus.className = 'status-badge status-fair';
+            }
+        }
+
+        // Simulate real-time readings
+        function simulateReadings() {
+            let currentValue = 150;
+            const targetValue = 245;
+            
+            const interval = setInterval(() => {
+                if (currentValue < targetValue) {
+                    currentValue += 5;
+                    document.getElementById('nitrogenValue').textContent = currentValue;
+                    document.getElementById('nValue').textContent = currentValue;
+                    updateGauge(currentValue);
+                    updateStatus(currentValue);
+                    
+                    const progress = (currentValue / 400) * 100;
+                    document.getElementById('nProgress').style.width = progress + '%';
+                } else {
+                    clearInterval(interval);
+                }
+            }, 50);
+        }
+
+        // Button actions
+        function startNewTest() {
+            alert('🔍 Starting new soil test...\nPlease insert probe into soil sample.');
+            setTimeout(() => {
+                simulateReadings();
+            }, 1000);
+        }
+
+        function exportData() {
+            alert('📥 Generating PDF report with complete soil analysis...\nReport will be saved to your device.');
+        }
+
+        // Initialize
+        createParticles();
+        setTimeout(() => {
+            simulateReadings();
+        }, 500);
+    </script>
+</body>
+</html>

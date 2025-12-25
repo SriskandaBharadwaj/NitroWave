@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Building Flowchart - Simple Version</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f0f4f8;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        /* Process Box (Rectangle) */
+        .process-box {
+            background: #b3d9ff;
+            border: 2px solid #80bfff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            min-width: 280px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .process-box.start {
+            background: #99ccff;
+            border-color: #66b3ff;
+        }
+
+        .process-box.end {
+            background: #99ff99;
+            border-color: #66cc66;
+        }
+
+        /* Decision Box (Diamond) */
+        .decision-box {
+            background: #ffeb99;
+            border: 2px solid #ffd966;
+            padding: 30px 40px;
+            position: relative;
+            min-width: 280px;
+            text-align: center;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .decision-content {
+            transform: rotate(-45deg);
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Action Box (Side box for Yes/No) */
+        .action-box {
+            background: #cce6ff;
+            border: 2px solid #99ccff;
+            padding: 15px 25px;
+            border-radius: 8px;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Arrow */
+        .arrow {
+            width: 3px;
+            height: 40px;
+            background: #666;
+            position: relative;
+            margin: 0;
+        }
+
+        .arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #666;
+        }
+
+        .arrow-short {
+            height: 30px;
+        }
+
+        /* Horizontal container for decision branches */
+        .decision-container {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin: 30px 0;
+        }
+
+        .side-branch {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .h-arrow {
+            width: 60px;
+            height: 3px;
+            background: #666;
+            position: relative;
+        }
+
+        .h-arrow.right::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid #666;
+        }
+
+        .h-arrow.left::after {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 12px solid #666;
+        }
+
+        .box-text {
+            font-size: 1.05em;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .label {
+            font-size: 0.9em;
+            color: #666;
+            font-weight: 600;
+            margin: 0 10px;
+        }
+
+        /* Vertical line connector */
+        .v-line {
+            width: 3px;
+            height: 60px;
+            background: #666;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .decision-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .side-branch {
+                flex-direction: column;
+            }
+
+            .h-arrow {
+                display: none;
+            }
+
+            .process-box,
+            .action-box,
+            .decision-box {
+                min-width: 240px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Website Building Process</h1>
+            <p>Smart Soil Monitoring System</p>
+        </div>
+
+        <div class="flowchart">
+            
+            <!-- Start -->
+            <div class="process-box start">
+                <div class="box-text">Start: Identify Problem</div>
+            </div>
+
+            <div class="arrow"></div>
+
+            <!-- Research & Planning -->
+            <div class="process-box">
+                <div class="box-text">Research & Plan Solution</div>
+            </div>
+
+            <div class="arrow"></div>
+
+            <!-- Design Website -->
+            <div class="process-box">
+                <div class="box-text">Design Website Layout</div>
+            </div>
+
+            <div class="arrow"></div>
+
+            <!-- Write Code in VS Code -->
+            <div class="process-box">
+                <div class="box-text">Write Code in VS Code</div>
+            </div>
+
+            <div class="arrow"></div>
+
+            <!-- Test in Browser -->
+            <div class="process-box">
+                <div class="box-text">Test in Browser</div>
+            </div>
+
+            <div class="arrow"></div>
+
+            <!-- Decision 1: Works properly? -->
+            <div class="decision-container">
+                <div class="side-branch">
+                    <div class="action-box">
+                        <div class="box-text">Fix Errors</div>
+                    </div>
+                    <div class="h-arrow left"></div>
+                    <span class="label">No</span>
+                </div>
+
+                <div class="decision-box">
+                    <div class="decision-content">Works<br>properly?</div>
+                </div>
+
+                <span class="label" style="margin-left: -30px;">Yes</span>
+            </div>
+
+            <div class="arrow"></div>
+
+            <!-- Get User Feedback -->
+            <div class="process-box">
+                <div class="box-text">Get User Feedback</div>
+            </div>
+
+            <div class="arrow"></div>
+
+            <!-- Decision 2: Need improvements? -->
+            <div class="decision-container">
+                <div class="side-branch">
+                    <div class="action-box">
+                        <div class="box-text">Make Changes</div>
+                    </div>
+                    <div class="h-arrow left"></div>
+                    <span class="label">Yes</span>
+                </div>
+
+                <div class="decision-box">
+                    <div class="decision-content">Need<br>improvements?</div>
+                </div>
+
+                <span class="label" style="margin-left: -30px;">No</span>
+            </div>
+
+            <div class="arrow"></div>
+
+            <!-- Test on Mobile -->
+            <div class="process-box">
+                <div class="box-text">Test on Mobile</div>
+            </div>
+
+            <div class="arrow"></div>
+
+            <!-- Decision 3: Mobile ready? -->
+            <div class="decision-container">
+                <div class="side-branch">
+                    <div class="action-box">
+                        <div class="box-text">Fix Mobile Issues</div>
+                    </div>
+                    <div class="h-arrow left"></div>
+                    <span class="label">No</span>
+                </div>
+
+                <div class="decision-box">
+                    <div class="decision-content">Mobile<br>ready?</div>
+                </div>
+
+                <span class="label" style="margin-left: -30px;">Yes</span>
+            </div>
+
+            <div class="arrow"></div>
+
+            <!-- Save Final File -->
+            <div class="process-box">
+                <div class="box-text">Save Final File</div>
+            </div>
+
+            <div class="arrow"></div>
+
+            <!-- End -->
+            <div class="process-box end">
+                <div class="box-text">Website Complete!</div>
+            </div>
+
+        </div>
+
+        <!-- Note -->
+        <div style="background: #fff9e6; border: 2px solid #ffd966; padding: 20px; border-radius: 10px; margin-top: 40px; text-align: center;">
+            <strong style="color: #cc8800; font-size: 1.1em;">Important Note:</strong>
+            <p style="color: #666; margin-top: 10px; line-height: 1.6;">
+                This is a hardware project (NPK sensor) shown as a website. The website demonstrates how the real device would work for farmers.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
